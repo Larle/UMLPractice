@@ -1,5 +1,7 @@
 package com.koitt.board.controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,9 @@ import com.koitt.board.service.UserInfoService;
 @RequestMapping("/rest")
 public class UserRestController {
 	
+
+	private Logger logger = LogManager.getLogger(this.getClass());
+	
 	@Autowired
 	private UserInfoService userInfoService;
 	
@@ -23,7 +28,7 @@ public class UserRestController {
 	
 	public ResponseEntity<String> login(UserInfo userInfo) {
 		// TODO Auto-generated method stub
-		UserInfo item = userInfoService.detail(userInfo.getEmail());
+		logger.debug(userInfo);
 		
 		boolean isMatched = userInfoService.isPasswordMatched(userInfo.getEmail(), userInfo.getPassword());
 		
@@ -31,6 +36,8 @@ public class UserRestController {
 			String plainCredentials = userInfo.getEmail() + ":" + userInfo.getPassword();
 		
 			String base64Credentials = new String(Base64.encodeBase64(plainCredentials.getBytes()));
+			
+			logger.debug(base64Credentials);
 			
 			return new ResponseEntity<String>(base64Credentials, HttpStatus.OK);
 			
